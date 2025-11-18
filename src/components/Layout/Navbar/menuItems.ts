@@ -15,7 +15,8 @@ import {
   REVEAL_MANAGE,
   RESOURCE_PLANNING_PAGE,
   DATA_PROCESSING_PROGRESS,
-  REVEAL_SIMULATION
+  REVEAL_SIMULATION,
+  GROUP_MANAGEMENT
 } from '../../../constants';
 
 export const MAIN_MENU = [
@@ -101,6 +102,11 @@ export const MAIN_MENU = [
       {
         pageTitle: 'dataProcessingProgress',
         route: DATA_PROCESSING_PROGRESS,
+        roles: ['data_processing_progress']
+      },
+      {
+        pageTitle: 'groupManagement',
+        route: GROUP_MANAGEMENT,
         roles: ['data_processing_progress']
       }
     ]

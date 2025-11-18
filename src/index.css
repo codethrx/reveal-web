@@ -69,3 +69,16 @@ code {
 .modal-90w {
   max-width: 90vw !important;
 }
+.custom-table-header {
+  border-bottom: 2px solid #E8E8E8 !important;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  background-color: transparent !important;
+}
+
+.custom-table-row {
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.custom-table-row:last-child {
+  border-bottom: none;
+}

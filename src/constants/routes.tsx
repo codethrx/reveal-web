@@ -31,3 +31,7 @@ export const TAG_MANAGEMENT = '/admin/tag-management';
 export const METADATA_IMPORT = '/admin/metadata-import';
 
 export const DATA_PROCESSING_PROGRESS = '/admin/kafka-messaging';
+
+//Group Management Pages
+export const GROUP_MANAGEMENT = '/admin/group-management'
+

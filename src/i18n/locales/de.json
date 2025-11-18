@@ -20,7 +20,8 @@
     "planReporting": "Plan Reporting (de)",
     "performanceReporting": "Performance Reporting (de)",
     "surveyReporting": "Survey Reporting (de)",
-    "MetaDataImport": "Metadata Import (de)"
+    "MetaDataImport": "Metadata Import (de)",
+    "groupManagement": "Gruppenverwaltung"
   },
   "publicPage": {
     "supportedBy": "unterstützt von",
@@ -62,6 +63,10 @@
     "organization": "Organisation",
     "user": "Nutzer",
     "userImport": "Benutzerimport"
+  },
+   "groupManagement": {
+    "groupConfiguration": "Gruppenkonfiguration",
+    "fieldConfiguration": "Feldkonfiguration"
   },
   "userPage": {
     "Username": "Nutzername",

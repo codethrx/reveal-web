@@ -20,7 +20,8 @@
     "Simulation": "Simulation",
     "TagManagement": "Gestion des balises",
     "MetaDataImport": "Importation de métadonnées",
-    "Resource Planning": "La planification des ressources"
+    "Resource Planning": "La planification des ressources",
+    "groupManagement": "Gestion de groupe"
   },
   "publicPage": {
     "supportedBy": "supporté par",
@@ -63,6 +64,10 @@
     "organization": "Organisation",
     "user": "Utilisateur",
     "userImport": "Importation d'utilisateurs"
+  },
+   "groupManagement": {
+    "groupConfiguration": "Configuration du groupe",
+    "fieldConfiguration": "Configuration du champ"
   },
   "userPage": {
     "Username": "Nom d'utilisateur",
