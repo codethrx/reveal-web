@@ -82,3 +82,11 @@ code {
 .custom-table-row:last-child {
   border-bottom: none;
 }
+.rotatable-element {
+  transform: rotate(0deg);
+}
+@media (max-width: 768px) {
+  .rotatable-element {
+    transform: rotate(90deg);
+  }
+}
