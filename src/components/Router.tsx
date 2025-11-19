@@ -29,6 +29,8 @@ import ResourcePlanning from '../pages/ResourcePlanning';
 import DataProcessingProgress from '../features/technical/components/DataProcessingProgress';
 import TagManagement2 from '../pages/TagManagement/TagManagement2';
 import GroupManagement from '../pages/GroupManagement';
+import GroupConfiguration from '../features/group-management/components/groupConfiguration';
+import GroupDetails from '../features/group-management/components/groupDetails';
 
 const Router = () => {
   const { keycloak, initialized } = useKeycloak();
@@ -44,7 +46,10 @@ const Router = () => {
             <Route path=":tab" element={<Management />} />
           </Route>
           <Route path={GROUP_MANAGEMENT + '/*'} element={<GroupManagement />}>
-          
+            <Route index element={<Navigate to="group-configuration" replace />} />
+            <Route path="group-configuration" element={<GroupConfiguration />} />
+            <Route path="group-configuration/:id" element={<GroupDetails />} />
+            {/* <Route path="group-field-configuration" element={<GroupFieldConfiguration />} /> */}
           </Route>
           <Route path={LOCATION_PAGE + '/*'} element={<Location />}>
             <Route path=":tab" element={<Location />} />

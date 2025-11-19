@@ -10,7 +10,12 @@ import {
     InputGroup,
     Modal,
 } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { GROUP_MANAGEMENT } from '../../../../constants';
+// import { useAppSelector } from '../../../../store/hooks';
 export default function GroupConfiguration() {
+    // const isDarkMode = useAppSelector(state => state.darkMode.value);
+    const navigate =useNavigate()
     const [groups, setGroups] = useState([
         { id: 1, name: 'Group A', team: true },
         { id: 2, name: 'Group B', team: false },
@@ -115,24 +120,26 @@ export default function GroupConfiguration() {
                         {/* Table */}
                         <Card>
                             <Card.Body className="p-0">
-                                <Table responsive hover bordered>
+                                <Table responsive hover bordered >
                                     <thead style={{background:'transparent'}}>
-                                        <tr>
-                                            <th className="px-4 py-3 fw-semibold text-dark bg-light custom-table-header">
+                                        <tr style={{background:'transparent'}}>
+                                            <th className="px-4 py-4 fw-semibold text-dark  custom-table-header">
                                                 Group Name
                                             </th>
-                                            <th className="px-4 py-3 fw-semibold text-dark bg-light custom-table-header">
+                                            <th className="px-4 py-4 fw-semibold text-dark custom-table-header">
                                                 Team
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filteredGroups.map(group => (
-                                            <tr key={group.id} className="custom-table-row">
-                                                <td className="px-4 py-3 custom-table-cell">
+                                            <tr onClick={()=>{
+                                                navigate(`${GROUP_MANAGEMENT}/group-configuration/${group.id}`)
+                                            }} key={group.id} className="custom-table-row">
+                                                <td className="px-4 py-4 custom-table-cell">
                                                     {group.name}
                                                 </td>
-                                                <td className="px-4 py-3 custom-table-cell">
+                                                <td className="px-4 py-4 custom-table-cell">
                                                     <Button
                                                         variant="link"
                                                         onClick={() => toggleTeamStatus(group.id)}
