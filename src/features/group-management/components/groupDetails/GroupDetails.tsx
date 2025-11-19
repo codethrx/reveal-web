@@ -16,7 +16,7 @@ interface SelectionState {
 
 export default function GroupConfiguration(): JSX.Element {
   const [groupName, setGroupName] = useState<string>('');
-  const [isTeam, setIsTeam] = useState<boolean>(false);
+  const [isTeam, setIsTeam] = useState<boolean>(true);
 
   // Areas state
   const [selectedAreas, setSelectedAreas] = useState<SelectionState>({
@@ -184,22 +184,22 @@ export default function GroupConfiguration(): JSX.Element {
         </div>
 
         {/* Members Section */}
-        <MembersTransfer
+        {isTeam && <MembersTransfer
           allMembers={allMembers}
           onAssignMember={assignMember}
           onUnassignMember={unassignMember}
           onAssignAll={assignAll}
           onUnassignAll={unassignAll}
-        />
+        />}
         <div className='w-100' style={{ height: 2, marginTop: 20, background: '#E8E8E8' }} />
         {/* Save Button */}
-       <div className="mt-2 row">
-  <div className="col-12 col-md-auto ms-md-auto">
-    <button className="btn btn-primary px-4 py-2 w-100">
-      Save
-    </button>
-  </div>
-</div>
+        <div className="mt-4 row">
+          <div className="col-12 col-md-auto ms-md-auto">
+            <button className="btn btn-primary px-4 py-2 w-100">
+              Save
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
