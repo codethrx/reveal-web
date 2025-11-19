@@ -3,6 +3,7 @@ import { useState } from 'react';
 import AreasConfiguration from './components/AreaConfiguration';
 import MembersTransfer from './components/MemberTransfer';
 import CheckboxList from './components/CheckboxList';
+import FieldConfigSummary from './components/FieldConfigurationSummary';
 
 interface Member {
   id: number;
@@ -129,7 +130,7 @@ export default function GroupConfiguration(): JSX.Element {
   return (
     <div className=" d-flex flex-column">
       <div className="container-fluid p-4 flex-grow-1 d-flex flex-column">
-        <h1 className="h2 fw-bold text-dark mb-4">Group 1</h1>
+        <h1 className="h2 fw-bold text-dark mb-4">{isTeam ? "Field Configuration" : 'Group 1'}</h1>
 
         {/* Group Name and Team */}
         <div className="d-flex align-items-center gap-3 mb-4">
@@ -157,40 +158,56 @@ export default function GroupConfiguration(): JSX.Element {
 
         {/* Three Columns with Reusable Components */}
         <div className="row g-3 mb-4 flex-grow-0">
+          {/* First Column - Always visible */}
           <div className="col-md-4 d-flex">
             <AreasConfiguration
+              isTeam={isTeam}
               selectedAreas={selectedAreas}
               onAreaToggle={handleAreaToggle}
             />
           </div>
 
+          {/* Second Column - Always visible */}
           <div className="col-md-4 d-flex">
-            <CheckboxList
-              title="Permissions"
-              items={permissions}
-              onToggle={(key) => setPermissions(prev => ({ ...prev, [key]: !prev[key] }))}
-            />
+            {isTeam ? (
+              <FieldConfigSummary
+                title="Assigned"
+                items={permissions}
+                onToggle={(key) => setPermissions(prev => ({ ...prev, [key]: !prev[key] }))}
+              />
+            ) : (
+              <CheckboxList
+                title="Permissions"
+                items={permissions}
+                onToggle={(key) => setPermissions(prev => ({ ...prev, [key]: !prev[key] }))}
+              />
+            )}
           </div>
 
-          <div className="col-md-4 d-flex">
-            <CheckboxList
-              title="Datasets"
-              items={datasets}
-              onToggle={(key) => setDatasets(prev => ({ ...prev, [key]: !prev[key] }))}
-              showAddButton={true}
-              onAddClick={handleAddDataset}
-            />
-          </div>
+          {/* Third Column - Conditionally rendered based on isTeam */}
+          {!isTeam && (
+            <div className="col-md-4 d-flex">
+              <CheckboxList
+                title="Datasets"
+                items={datasets}
+                onToggle={(key) => setDatasets(prev => ({ ...prev, [key]: !prev[key] }))}
+                showAddButton={true}
+                onAddClick={handleAddDataset}
+              />
+            </div>
+          )}
+
+          {/* When isTeam is true, the third column space will automatically be distributed to the first two columns */}
         </div>
 
         {/* Members Section */}
-        {isTeam && <MembersTransfer
+        <MembersTransfer
           allMembers={allMembers}
           onAssignMember={assignMember}
           onUnassignMember={unassignMember}
           onAssignAll={assignAll}
           onUnassignAll={unassignAll}
-        />}
+        />
         <div className='w-100' style={{ height: 2, marginTop: 20, background: '#E8E8E8' }} />
         {/* Save Button */}
         <div className="mt-4 row">

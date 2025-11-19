@@ -50,10 +50,8 @@ const GroupManagement = () => {
         }}
       >
         <Tab eventKey="group-configuration" title={t('groupManagement.groupConfiguration')} />
-        <Tab eventKey="group-field-configuration" title={t('groupManagement.fieldConfiguration')} />
+        {/* <Tab eventKey="group-field-configuration" title={t('groupManagement.fieldConfiguration')} /> */}
       </Tabs>
-      
-      {/* Outlet renders the matched child route */}
       <Outlet />
       </>
     </PageWrapper>

@@ -129,25 +129,6 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
     <div style={{height:'25vh',overflowY:'auto'}} className="card border flex-fill d-flex flex-column">
       <div className="card-header bg-light d-flex align-items-center justify-content-between">
         <h5 className="card-title mb-0 fw-semibold">{title}</h5>
-        <div className="d-flex gap-1">
-          <button
-            onClick={onSelectAll}
-            className="btn btn-link p-0 border-0 text-muted"
-            title={`Select all ${title.toLowerCase()}`}
-            style={{ fontSize: '12px' }}
-          >
-            All
-          </button>
-          <span className="text-muted">|</span>
-          <button
-            onClick={onDeselectAll}
-            className="btn btn-link p-0 border-0 text-muted"
-            title={`Deselect all ${title.toLowerCase()}`}
-            style={{ fontSize: '12px' }}
-          >
-            None
-          </button>
-        </div>
       </div>
       <div className="card-body p-0 flex-fill" style={{  }}>
         <div className="list-group list-group-flush">
