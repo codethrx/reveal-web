@@ -129,7 +129,7 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
     <div style={{height:'25vh',overflowY:'auto'}} className="card border flex-fill d-flex flex-column">
       <div className="card-header bg-light d-flex align-items-center justify-content-between">
         <h5 className="card-title mb-0 fw-semibold">{title}</h5>
-        {/* <div className="d-flex gap-1">
+        <div className="d-flex gap-1">
           <button
             onClick={onSelectAll}
             className="btn btn-link p-0 border-0 text-muted"
@@ -147,7 +147,7 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
           >
             None
           </button>
-        </div> */}
+        </div>
       </div>
       <div className="card-body p-0 flex-fill" style={{  }}>
         <div className="list-group list-group-flush">
@@ -185,7 +185,7 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
   return (
     <div className="flex d-flex flex-column" style={{}}>
       <h2 className=" fw-bold text-dark mb-3">Members</h2>
-      <div className="d-flex gap-5 align-items-stretch flex-fill">
+      <div className="d-flex flex-column flex-md-row gap-5 align-items-stretch flex-fill">
         <MemberList
           members={filteredMembers}
           title="All"
@@ -197,7 +197,7 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
           actionIcon={<EditIcon />}
           actionLabel="Assign member"
         />
-        <div style={{height:'25vh'}} className="d-flex flex-column gap-2 justify-content-end pb-3">
+        <div  className="d-flex flex-row flex-md-column gap-2 justify-content-center justify-content-md-end pb-3">
           <button
             onClick={assignSelected}
             disabled={selectedUnassigned.length === 0}
