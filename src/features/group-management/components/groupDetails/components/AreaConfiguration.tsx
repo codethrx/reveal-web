@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 interface SelectionState {
   [key: string]: boolean;
 }
+
 interface Team {
   id: number;
   teamName: string;
 }
+
 interface Area {
   id: string;
   name: string;
@@ -31,6 +33,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
     Baku: true,
     Laka: true
   });
+  
   const [activePopover, setActivePopover] = useState<string | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ top: number; left: number } | null>(null);
 
@@ -42,8 +45,8 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
     areaId: null
   });
 
-  // Dynamic areas data
-  const areasData: Area[] = [
+  // Dynamic areas data with team assignments
+  const [areasData, setAreasData] = useState<Area[]>([
     {
       id: 'Niagara',
       name: 'Niagara',
@@ -68,7 +71,24 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
         }
       ]
     }
-  ];
+  ]);
+
+  // Function to update team assignment for an area
+  const updateAreaTeam = (areaId: string, team: Team | null): void => {
+    const updateAreaInTree = (areas: Area[]): Area[] => {
+      return areas.map(area => {
+        if (area.id === areaId) {
+          return { ...area, assignedTeam: team };
+        }
+        if (area.children) {
+          return { ...area, children: updateAreaInTree(area.children) };
+        }
+        return area;
+      });
+    };
+
+    setAreasData(prevData => updateAreaInTree(prevData));
+  };
 
   const toggleArea = (areaId: string): void => {
     setExpandedAreas(prev => ({ ...prev, [areaId]: !prev[areaId] }));
@@ -86,6 +106,21 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
     }
     
     setActivePopover(activePopover === areaId ? null : areaId);
+  };
+
+  const handleAssignTeam = (areaId: string, teamId: number): void => {
+    const selectedTeam = {
+      id: teamId,
+      teamName: `Team ${teamId}`
+    };
+    
+    updateAreaTeam(areaId, selectedTeam);
+    console.log("Assigned team to area:", areaId, selectedTeam);
+  };
+
+  const handleRemoveTeam = (areaId: string): void => {
+    updateAreaTeam(areaId, null);
+    console.log("Removed team from area:", areaId);
   };
 
   const renderArea = (area: Area, level: number = 0): JSX.Element => {
@@ -124,12 +159,12 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
               {area.name}
             </label>
           </div>
+          
           {isTeam && level >= 2 && (
             <div className="d-flex align-items-center gap-2 position-relative">
-
               {/* Assigned Team Label */}
               {area.assignedTeam && (
-                <span className="small">
+                <span className="small badge bg-primary">
                   {area.assignedTeam.teamName}
                 </span>
               )}
@@ -201,7 +236,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
             zIndex: 1050,
             top: `${popoverPosition.top}px`,
             left: `${popoverPosition.left}px`,
-            width: "150px"
+            width: "180px"
           }}
         >
           <div
@@ -214,6 +249,20 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
             }}
           >
             Change Team
+          </div>
+
+          <div
+            className="dropdown-item small text-danger"
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              if (activePopover) {
+                handleRemoveTeam(activePopover);
+                setActivePopover(null);
+                setPopoverPosition(null);
+              }
+            }}
+          >
+            Remove Team
           </div>
 
           <div className="dropdown-item small" style={{ cursor: "pointer" }}>
@@ -240,21 +289,11 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
 
               <div className="modal-body">
                 <label className="form-label">Select Team</label>
-
                 <select
                   className="form-select"
-                  onChange={(e) => {
-                    const selectedTeam = {
-                      id: Number(e.target.value),
-                      teamName: `Team ${e.target.value}`
-                    };
-                    console.log(
-                      "Assign team to area:",
-                      teamModal.areaId,
-                      selectedTeam
-                    );
-                  }}
+                  defaultValue=""
                 >
+                  <option value="" disabled>Select a team</option>
                   <option value="1">Team 1</option>
                   <option value="2">Team 2</option>
                   <option value="3">Team 3</option>
@@ -271,7 +310,15 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
 
                 <button
                   className="btn btn-primary"
-                  onClick={() => setTeamModal({ open: false, areaId: null })}
+                  onClick={() => {
+                    if (teamModal.areaId) {
+                      const selectElement = document.querySelector('.modal-content .form-select') as HTMLSelectElement;
+                      if (selectElement && selectElement.value) {
+                        handleAssignTeam(teamModal.areaId, Number(selectElement.value));
+                      }
+                    }
+                    setTeamModal({ open: false, areaId: null });
+                  }}
                 >
                   Assign
                 </button>
