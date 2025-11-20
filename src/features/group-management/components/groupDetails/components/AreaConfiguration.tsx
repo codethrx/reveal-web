@@ -1,5 +1,6 @@
 // features/group-management/components/AreasConfiguration.tsx
 import React, { useState } from 'react';
+import { useAppSelector } from '../../../../../store/hooks';
 
 interface SelectionState {
   [key: string]: boolean;
@@ -33,7 +34,10 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
     Baku: true,
     Laka: true
   });
-  
+  const isDarkMode = useAppSelector(state => state.darkMode.value);
+  const bgClass = isDarkMode ? "bg-dark text-light" : "bg-white text-dark";
+  const bgClassHeader = isDarkMode ? "bg-dark text-light" : "bg-light text-dark";
+  const borderColor = isDarkMode ? "border-secondary" : "border";
   const [activePopover, setActivePopover] = useState<string | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ top: number; left: number } | null>(null);
 
@@ -97,14 +101,14 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
   const handleThreeDotsClick = (areaId: string, event: React.MouseEvent): void => {
     const buttonRect = event.currentTarget.getBoundingClientRect();
     const containerRect = event.currentTarget.closest('.card-body')?.getBoundingClientRect();
-    
+
     if (containerRect) {
       setPopoverPosition({
         top: buttonRect.bottom - containerRect.top + 5, // 5px offset
         left: buttonRect.right - containerRect.left - 150 // Adjust based on popover width
       });
     }
-    
+
     setActivePopover(activePopover === areaId ? null : areaId);
   };
 
@@ -113,7 +117,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
       id: teamId,
       teamName: `Team ${teamId}`
     };
-    
+
     updateAreaTeam(areaId, selectedTeam);
     console.log("Assigned team to area:", areaId, selectedTeam);
   };
@@ -123,10 +127,11 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
     console.log("Removed team from area:", areaId);
   };
 
-  const renderArea = (area: Area, level: number = 0): JSX.Element => {
+  const renderArea = (area: Area, level: number = 0, isDarkMode: boolean): JSX.Element => {
     const hasChildren = area.children && area.children.length > 0;
     const isExpanded = expandedAreas[area.id];
     const isSelected = selectedAreas[area.id];
+    const colorClass = isDarkMode ? "text-light" : "text-dark";
 
     return (
       <div key={area.id} className="w-100">
@@ -149,7 +154,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
             )}
 
             <label
-              className={`form-check-label ${level === 0 ? 'fw-bold text-dark' : level === 1 ? 'fw-semibold text-dark' : 'text-muted'} ${level >= 1 ? 'small' : ''}`}
+              className={`form-check-label ${level === 0 ? 'fw-bold' : level === 1 ? 'fw-semibold' : 'text-muted'} ${level >= 1 ? 'small' : ''} ${colorClass}`}
               htmlFor={`${area.id}-check`}
               style={{
                 fontSize: level === 0 ? '0.9rem' : level === 1 ? '0.85rem' : '0.8rem',
@@ -159,7 +164,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
               {area.name}
             </label>
           </div>
-          
+
           {isTeam && level >= 2 && (
             <div className="d-flex align-items-center gap-2 position-relative">
               {/* Assigned Team Label */}
@@ -208,7 +213,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
           <div className="mt-1">
             {area.children!.map((child, index) => (
               <div key={child.id}>
-                {renderArea(child, level + 1)}
+                {renderArea(child, level + 1, isDarkMode)}
               </div>
             ))}
           </div>
@@ -219,12 +224,12 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
 
   return (
     <div className="card border w-100 h-100 position-relative">
-      <div className="card-header bg-light py-2">
+      <div className={`card-header bg-light py-2 ${bgClassHeader + " " + borderColor}`}>
         <h5 className="card-title mb-0 fw-semibold">{'Areas'}</h5>
       </div>
-      <div className="card-body p-3" style={{ overflowY: 'auto', maxHeight: '400px' }}>
+      <div className={`card-body p-3 ${bgClass}`} style={{ overflowY: 'auto', maxHeight: '400px' }}>
         <div className="w-100">
-          {areasData.map(area => renderArea(area))}
+          {areasData.map(area => renderArea(area,0, isDarkMode))}
         </div>
       </div>
 
