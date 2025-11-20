@@ -229,7 +229,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
       </div>
       <div className={`card-body p-3 ${bgClass}`} style={{ overflowY: 'auto', maxHeight: '400px' }}>
         <div className="w-100">
-          {areasData.map(area => renderArea(area,0, isDarkMode))}
+          {areasData.map(area => renderArea(area, 0, isDarkMode))}
         </div>
       </div>
 
@@ -276,7 +276,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
         </div>
       )}
 
-      {teamModal.open && (
+      {/* {teamModal.open && (
         <div
           className="modal fade show d-block"
           style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}
@@ -294,6 +294,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
 
               <div className="modal-body">
                 <label className="form-label">Select Team</label>
+
                 <select
                   className="form-select"
                   defaultValue=""
@@ -332,7 +333,79 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
             </div>
           </div>
         </div>
+      )} */}
+      {teamModal.open && (
+        <div
+          className={`modal fade show d-block`}
+          tabIndex={-1}
+          style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1060 }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className={`modal-content ${isDarkMode ? 'bg-dark text-light' : 'bg-white text-dark'}`}>
+
+              {/* Modal Header */}
+              <div className={`modal-header ${isDarkMode ? 'border-bottom border-secondary' : ''}`}>
+                <h5 className="modal-title">Assign Team</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  onClick={() => setTeamModal({ open: false, areaId: null })}
+                ></button>
+              </div>
+
+              {/* Modal Body - Checkbox List */}
+              <div className="modal-body">
+                <label className="form-label mb-2">Select a Team</label>
+                <div className="d-flex flex-column">
+                  {[1, 2, 3].map(teamId => {
+                    // Check if the current area has this team assigned
+                    const isAssigned = areasData
+                      .flatMap(a => a.children ?? [])
+                      .flatMap(a => a.children ?? [])
+                      .some(area => area.id === teamModal.areaId && area.assignedTeam?.id === teamId);
+
+                    return (
+                      <div key={teamId} className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          id={`team-${teamId}`}
+                          checked={isAssigned} // <- default selection
+                          onChange={() => {
+                            if (teamModal.areaId) {
+                              handleAssignTeam(teamModal.areaId, teamId);
+                              setTeamModal({ open: false, areaId: null });
+                            }
+                          }}
+                        />
+                        <label className="form-check-label" htmlFor={`team-${teamId}`}>
+                          Team {teamId}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+
+              {/* Optional Modal Footer */}
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setTeamModal({ open: false, areaId: null })}
+                >
+                  Cancel
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
       )}
+
     </div>
   );
 };
