@@ -22,9 +22,8 @@ const FieldConfigSummary: React.FC<CheckboxListProps> = ({
 }) => {
   const isDarkMode = useAppSelector(state => state.darkMode.value);
   const bgClass = isDarkMode ? "bg-dark text-light" : "bg-white text-dark";
-  const bgClassHeader= isDarkMode ? "bg-dark text-light" : "bg-light text-dark";
+  const bgClassHeader = isDarkMode ? "bg-dark text-light" : "bg-light text-dark";
   const borderColor = isDarkMode ? "border-secondary" : "border";
-
   return (
     <div className={`card h-100 w-100 ${bgClass} border`}>
       {/* Header with bottom border */}
@@ -53,18 +52,15 @@ const FieldConfigSummary: React.FC<CheckboxListProps> = ({
         className={`card-body ${bgClass}`}
         style={{ overflowY: "auto", maxHeight: "400px" }}
       >
-        {Object.keys(items).map(key => (
-          <div key={key} className="form-check mb-3 d-flex justify-content-between">
-            <label className="form-check-label small">{key}</label>
-            <input
-              type="checkbox"
-              checked={items[key]}
-              onChange={() => onToggle(key)}
-              className="form-check-input"
-              id={`${key}-checkbox`}
-            />
-          </div>
-        ))}
+        {[
+          { label: "Target Areas", value: 92 },
+          { label: "Total structure", value: 1231 },
+          { label: "Total population", value: 5429 },
+          { label: "Completion", value: "70%" },
+        ].map(({ label, value }) => (<div key={label} className="mb-3 d-flex justify-content-between">
+          <label className="form-check-label small">{label}</label>
+          <label className="form-check-label small">{value}</label>
+        </div>))}
       </div>
     </div>
   );
