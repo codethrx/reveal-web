@@ -4,6 +4,8 @@ import AreasConfiguration from './components/AreaConfiguration';
 import MembersTransfer from './components/MemberTransfer';
 import CheckboxList from './components/CheckboxList';
 import FieldConfigSummary from './components/FieldConfigurationSummary';
+import { useNavigate } from 'react-router-dom';
+import { METADATA_IMPORT } from '../../../../constants';
 
 interface Member {
   id: number;
@@ -18,7 +20,7 @@ interface SelectionState {
 export default function GroupConfiguration(): JSX.Element {
   const [groupName, setGroupName] = useState<string>('');
   const [isTeam, setIsTeam] = useState<boolean>(true);
-
+  const navigate = useNavigate()
   // Areas state
   const [selectedAreas, setSelectedAreas] = useState<SelectionState>({
     Baku: false,
@@ -125,6 +127,7 @@ export default function GroupConfiguration(): JSX.Element {
   const handleAddDataset = (): void => {
     // Handle dataset addition logic
     console.log('Add dataset clicked');
+    navigate(METADATA_IMPORT + '/create-template')
   };
 
   return (
