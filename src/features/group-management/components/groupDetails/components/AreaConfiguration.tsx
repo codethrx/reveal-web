@@ -141,7 +141,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
         )}
 
         <div className={`d-flex align-items-center justify-content-between mb-1 ${level === 0 ? '' : level === 1 ? 'ps-3' : 'ps-5'}`}>
-          <div className="form-check mb-0 flex-grow-1 d-flex align-items-center">
+          <div className="mb-0 flex-grow-1 d-flex align-items-center">
             {/* Checkbox - only show for child levels */}
             {level >= 1 && (
               <input
