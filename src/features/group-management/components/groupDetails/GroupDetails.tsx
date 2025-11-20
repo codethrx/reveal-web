@@ -1,11 +1,12 @@
 // features/group-management/components/GroupConfiguration.tsx
 import { useState } from 'react';
-import AreasConfiguration from './components/AreaConfiguration';
+import AreasConfiguration, { Area, Team, SelectionState } from './components/AreaConfiguration';
 import MembersTransfer from './components/MemberTransfer';
 import CheckboxList from './components/CheckboxList';
 import FieldConfigSummary from './components/FieldConfigurationSummary';
 import { useNavigate } from 'react-router-dom';
 import { METADATA_IMPORT } from '../../../../constants';
+import { useAppSelector } from '../../../../store/hooks';
 
 interface Member {
   id: number;
@@ -13,26 +14,62 @@ interface Member {
   assigned: boolean;
 }
 
-interface SelectionState {
-  [key: string]: boolean;
-}
+// interface SelectionState {
+//   [key: string]: boolean;
+// }
 
 export default function GroupConfiguration(): JSX.Element {
   const [groupName, setGroupName] = useState<string>('');
   const [isTeam, setIsTeam] = useState<boolean>(true);
+  const isDarkMode = useAppSelector(state => state.darkMode.value);
   const navigate = useNavigate()
-  // Areas state
-  const [selectedAreas, setSelectedAreas] = useState<SelectionState>({
-    Baku: false,
-    PH1: false,
-    PH2: false,
-    PH3: false,
-    PH4: false,
-    Laka: false,
-    LG1: false,
-    LG2: false,
-    Niagara: false
-  });
+  const [areasData, setAreasData] = useState<Area[]>([
+    {
+      id: "Niagara",
+      name: "Niagara",
+      children: [
+        {
+          id: "Baku",
+          name: "Baku",
+          children: [
+            { id: "PH1", name: "PH1", assignedTeam: null },
+            { id: "PH2", name: "PH2", assignedTeam: null },
+            { id: "PH3", name: "PH3", assignedTeam: null },
+          ],
+        },
+        {
+          id: "Laka",
+          name: "Laka",
+          children: [
+            { id: "LG1", name: "LG1", assignedTeam: null },
+            { id: "LG2", name: "LG2", assignedTeam: null },
+          ],
+        },
+      ],
+    },
+  ]);
+
+  // Selection state
+  const initializeSelection = (areas: Area[]): SelectionState => {
+    const result: SelectionState = {};
+    const traverse = (list: Area[]) => {
+      list.forEach((a) => {
+        result[a.id] = false;
+        if (a.children) traverse(a.children);
+      });
+    };
+    traverse(areas);
+    return result;
+  };
+
+  const [selectedAreas, setSelectedAreas] = useState<SelectionState>(initializeSelection(areasData));
+
+  // Teams
+  const teams: Team[] = [
+    { id: 1, teamName: "Team 1" },
+    { id: 2, teamName: "Team 2" },
+    { id: 3, teamName: "Team 3" },
+  ];
 
   // Permissions state
   const [permissions, setPermissions] = useState<SelectionState>({
@@ -58,51 +95,6 @@ export default function GroupConfiguration(): JSX.Element {
     { id: 6, name: 'Emma Wilson', assigned: false }
   ]);
 
-  // Area toggle handler with parent-child logic
-  const handleAreaToggle = (areaId: string, isParent: boolean = false): void => {
-    setSelectedAreas(prev => {
-      const newState = { ...prev };
-
-      // Define area hierarchy
-      const areaHierarchy: { [key: string]: string[] } = {
-        Niagara: ['Baku', 'Laka'],
-        Baku: ['PH1', 'PH2', 'PH3', 'PH4'],
-        Laka: ['LG1', 'LG2']
-      };
-
-      if (isParent && areaHierarchy[areaId]) {
-        // Toggle all children
-        const children = areaHierarchy[areaId];
-        const allChildrenSelected = children.every(child => prev[child]);
-
-        children.forEach(child => {
-          newState[child] = !allChildrenSelected;
-        });
-
-        // Update parent based on children state
-        newState[areaId] = !allChildrenSelected;
-      } else {
-        // Toggle individual area
-        newState[areaId] = !prev[areaId];
-
-        // Update parent if this is a child
-        const parent = Object.keys(areaHierarchy).find(parent =>
-          areaHierarchy[parent]?.includes(areaId)
-        );
-
-        if (parent) {
-          const siblings = areaHierarchy[parent];
-          const allSiblingsSelected = siblings.every(sibling =>
-            sibling === areaId ? newState[areaId] : prev[sibling]
-          );
-          newState[parent] = allSiblingsSelected;
-        }
-      }
-
-      return newState;
-    });
-  };
-
   // Member management functions
   const assignMember = (id: number): void => {
     setAllMembers(prev => prev.map(m =>
@@ -125,9 +117,78 @@ export default function GroupConfiguration(): JSX.Element {
   };
 
   const handleAddDataset = (): void => {
-    // Handle dataset addition logic
-    console.log('Add dataset clicked');
     navigate(METADATA_IMPORT + '/create-template')
+  };
+   // Recursive toggle children
+  const toggleChildren = (area: Area, checked: boolean, state: SelectionState) => {
+    state[area.id] = checked;
+    if (area.children) {
+      area.children.forEach((child) => toggleChildren(child, checked, state));
+    }
+  };
+
+  // Recursive update parent
+  const updateParents = (areas: Area[], state: SelectionState) => {
+    areas.forEach((area) => {
+      if (area.children) {
+        const allSelected = area.children.every((child) => state[child.id]);
+        state[area.id] = allSelected;
+        updateParents(area.children, state);
+      }
+    });
+  };
+
+  // Handle area toggle
+  const handleAreaToggle = (areaId: string) => {
+    setSelectedAreas((prev) => {
+      const newState = { ...prev };
+
+      const findAreaById = (areas: Area[]): Area | null => {
+        for (const a of areas) {
+          if (a.id === areaId) return a;
+          if (a.children) {
+            const found = findAreaById(a.children);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      const area = findAreaById(areasData);
+      if (!area) return prev;
+
+      const checked = !prev[areaId];
+
+      // Toggle self and children recursively
+      toggleChildren(area, checked, newState);
+
+      // Update parents recursively
+      updateParents(areasData, newState);
+
+      return newState;
+    });
+  };
+
+  // Assign team to area
+  const handleAssignTeam = (areaId: string, team: Team) => {
+    const updateTeam = (areas: Area[]): Area[] =>
+      areas.map((a) => {
+        if (a.id === areaId) return { ...a, assignedTeam: team };
+        if (a.children) return { ...a, children: updateTeam(a.children) };
+        return a;
+      });
+    setAreasData((prev) => updateTeam(prev));
+  };
+
+  // Remove team from area
+  const handleRemoveTeam = (areaId: string) => {
+    const updateTeam = (areas: Area[]): Area[] =>
+      areas.map((a) => {
+        if (a.id === areaId) return { ...a, assignedTeam: null };
+        if (a.children) return { ...a, children: updateTeam(a.children) };
+        return a;
+      });
+    setAreasData((prev) => updateTeam(prev));
   };
 
   return (
@@ -161,9 +222,15 @@ export default function GroupConfiguration(): JSX.Element {
         {/* First Column - Always visible */}
         <div className="col-md-4 d-flex">
           <AreasConfiguration
-            isTeam={isTeam}
+            areasData={areasData}
             selectedAreas={selectedAreas}
             onAreaToggle={handleAreaToggle}
+            teams={teams}
+            isTeam={isTeam}
+            onAssignTeam={handleAssignTeam}
+            onRemoveTeam={handleRemoveTeam}
+            maxHeight={500}
+            darkMode={isDarkMode}
           />
         </div>
 
@@ -215,7 +282,7 @@ export default function GroupConfiguration(): JSX.Element {
           </button>
         </div>
       </div>
-     
+
     </>
   );
 }
