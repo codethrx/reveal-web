@@ -1,5 +1,5 @@
 // features/group-management/components/AreasConfiguration.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../../../../../store/hooks';
 
 interface SelectionState {
@@ -40,7 +40,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
   const borderColor = isDarkMode ? "border-secondary" : "border";
   const [activePopover, setActivePopover] = useState<string | null>(null);
   const [popoverPosition, setPopoverPosition] = useState<{ top: number; left: number } | null>(null);
-
+  const popoverRef = useRef<HTMLDivElement | null>(null);
   const [teamModal, setTeamModal] = useState<{
     open: boolean;
     areaId: string | null;
@@ -221,7 +221,19 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
       </div>
     );
   };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setActivePopover(null);
+        setPopoverPosition(null);
+      }
+    };
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   return (
     <div className="card border w-100 h-100 position-relative">
       <div className={`card-header bg-light py-2 ${bgClassHeader + " " + borderColor}`}>
@@ -236,6 +248,7 @@ const AreasConfiguration: React.FC<AreasConfigurationProps> = ({
       {/* Popover rendered outside the scroll container */}
       {activePopover && popoverPosition && (
         <div
+          ref={popoverRef}  
           className="position-absolute bg-white border rounded shadow-sm p-2"
           style={{
             zIndex: 1050,
