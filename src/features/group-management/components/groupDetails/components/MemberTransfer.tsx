@@ -1,6 +1,8 @@
 // features/group-management/components/MembersTransfer.tsx
 import React, { useState } from 'react';
 import { useAppSelector } from '../../../../../store/hooks';
+import { ActionDialog } from '../../../../../components/Dialogs';
+import GroupUser from './GroupUser';
 
 interface Member {
   id: number;
@@ -30,7 +32,7 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
   const assignedMembers = allMembers.filter(m => m.assigned);
 
   // Icon components
-  const EditIcon = ({color,}:{color:string}): JSX.Element => (
+  const EditIcon = ({ color, }: { color: string }): JSX.Element => (
     <span>
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0 9.49833V11.9983H2.5L9.87667 4.62167L7.37667 2.12167L0 9.49833ZM11.8033 2.695C12.0633 2.435 12.0633 2.01167 11.8033 1.75167L10.2467 0.195C9.98667 -0.065 9.56333 -0.065 9.30333 0.195L8.08333 1.415L10.5833 3.915L11.8033 2.695Z" fill={color} />
@@ -131,15 +133,35 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
       const bgClass = isDarkMode ? "bg-dark text-light" : "bg-white text-dark";
       const bgClassHeader = isDarkMode ? "bg-dark text-light" : "bg-light text-dark";
       const borderColor = isDarkMode ? "border-secondary" : "border";
+      const [showEdit, setShowEdit] = useState(false)
       return (
         <div style={{ height: '25vh', overflowY: 'auto' }} className="card border flex-fill d-flex flex-column">
+          {showEdit && (
+            <ActionDialog
+              closeHandler={() => setShowEdit(false)}
+              // element={<h2>Modal</h2>}
+              element={<GroupUser user={{
+                identifier: "user-123",
+                username: "john.doe",
+                firstName: "John",
+                lastName: "Doe",
+                email: "john.doe@example.com",
+                securityGroups: ["Admin", "User"],
+                organizations: [
+                  { identifier: "org1", name: "Organization 1" },
+                  { identifier: "org2", name: "Organization 2" }
+                ]
+              }} handleClose={() => setShowEdit(false)} />}
+              title="User details"
+            />
+          )}
           <div className={`card-header ${bgClassHeader} ${borderColor}`}>
             <h5 className="card-title mb-0 fw-semibold">{title}</h5>
           </div>
           <div className={`card-body p-0 flex-fill ${bgClass}`} style={{}}>
             <div className={"list-group list-group-flush "}>
               {members.map(member => (
-                <div key={member.id} className={"list-group-item d-flex align-items-center justify-content-between"+" "+borderColor+" "+bgClass}>
+                <div key={member.id} className={"list-group-item d-flex align-items-center justify-content-between" + " " + borderColor + " " + bgClass}>
                   <div className="form-check mb-0 flex-grow-1">
                     <input
                       type="checkbox"
@@ -153,7 +175,9 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
                     </label>
                   </div>
                   <button
-                    onClick={() => onMemberAction(member.id)}
+                    onClick={() => {
+                      setShowEdit(true)
+                    }}
                     className="btn btn-link p-0 text-muted border-0 flex-shrink-0"
                     style={{ opacity: 0.3 }}
                     onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
@@ -169,7 +193,6 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
         </div>
       )
     };
-
   return (
     <div className="flex d-flex flex-column" style={{}}>
       <h2 className=" fw-bold mb-3">Members</h2>
@@ -182,7 +205,7 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
           onSelectAll={selectAllUnassigned}
           onDeselectAll={deselectAllUnassigned}
           onMemberAction={onAssignMember}
-          actionIcon={<EditIcon color={!isDarkMode?'black':'white'} />}
+          actionIcon={<EditIcon color={!isDarkMode ? 'black' : 'white'} />}
           actionLabel="Assign member"
         />
         <div className="d-flex flex-row flex-md-column gap-2 justify-content-center justify-content-md-end pb-3">
@@ -242,10 +265,11 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
           onSelectAll={selectAllAssigned}
           onDeselectAll={deselectAllAssigned}
           onMemberAction={onUnassignMember}
-          actionIcon={<EditIcon color={!isDarkMode?'black':'white'} />}
+          actionIcon={<EditIcon color={!isDarkMode ? 'black' : 'white'} />}
           actionLabel="Unassign member"
         />
       </div>
+
     </div>
   );
 };
