@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-dom';
 import { GROUP_MANAGEMENT } from '../../../../constants';
 import DefaultTable from '../../../../components/Table/DefaultTable';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from '../../../../store/hooks';
 
 export default function GroupConfiguration() {
     const navigate = useNavigate();
-
+    const isDarkMode = useAppSelector(state => state.darkMode.value);
     const [groups, setGroups] = useState([
         { id: 1, name: 'Group A', team: true },
         { id: 2, name: 'Group B', team: false },
@@ -91,7 +92,7 @@ export default function GroupConfiguration() {
                 }}
             />
             {/* Create Modal */}
-            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} centered>
+            <Modal contentClassName={isDarkMode ? 'bg-dark' : 'bg-white'} show={showCreateModal} onHide={() => setShowCreateModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Create New Group</Modal.Title>
                 </Modal.Header>
