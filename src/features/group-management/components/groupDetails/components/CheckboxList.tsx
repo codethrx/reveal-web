@@ -1,5 +1,6 @@
 // features/group-management/components/CheckboxList.tsx
 import React from 'react';
+import { useAppSelector } from '../../../../../store/hooks';
 
 interface SelectionState {
   [key: string]: boolean;
@@ -20,9 +21,14 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
   showAddButton = false,
   onAddClick,
 }) => {
+  const isDarkMode = useAppSelector(state => state.darkMode.value);
+  const bgClass = isDarkMode ? "bg-dark text-light" : "bg-white text-dark";
+  const bgClassHeader= isDarkMode ? "bg-dark text-light" : "bg-light text-dark";
+  const borderColor = isDarkMode ? "border-secondary" : "border";
   return (
+    
     <div className="card border h-100 w-100">
-      <div className="card-header bg-light d-flex align-items-center justify-content-between">
+      <div className={`card-header bg-light d-flex align-items-center justify-content-between ${bgClassHeader} ${borderColor}`}>
         <h5 className="card-title mb-0 fw-semibold">{title}</h5>
         {showAddButton && (
           // <button
@@ -37,7 +43,7 @@ const CheckboxList: React.FC<CheckboxListProps> = ({
           
         )}
       </div>
-      <div className="card-body" style={{ overflowY: 'auto', maxHeight: '400px' }}>
+      <div className={`card-body ${bgClass}`} style={{ overflowY: 'auto', maxHeight: '400px' }}>
         {Object.keys(items).map(key => (
           <div key={key} className="form-check mb-3">
             <input

@@ -1,5 +1,6 @@
 // features/group-management/components/MembersTransfer.tsx
 import React, { useState } from 'react';
+import { useAppSelector } from '../../../../../store/hooks';
 
 interface Member {
   id: number;
@@ -24,15 +25,15 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
 }) => {
   const [selectedUnassigned, setSelectedUnassigned] = useState<number[]>([]);
   const [selectedAssigned, setSelectedAssigned] = useState<number[]>([]);
-
+  const isDarkMode = useAppSelector(state => state.darkMode.value);
   const filteredMembers = allMembers.filter(m => !m.assigned);
   const assignedMembers = allMembers.filter(m => m.assigned);
 
   // Icon components
-  const EditIcon = (): JSX.Element => (
+  const EditIcon = ({color,}:{color:string}): JSX.Element => (
     <span>
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 9.49833V11.9983H2.5L9.87667 4.62167L7.37667 2.12167L0 9.49833ZM11.8033 2.695C12.0633 2.435 12.0633 2.01167 11.8033 1.75167L10.2467 0.195C9.98667 -0.065 9.56333 -0.065 9.30333 0.195L8.08333 1.415L10.5833 3.915L11.8033 2.695Z" fill="black" />
+        <path d="M0 9.49833V11.9983H2.5L9.87667 4.62167L7.37667 2.12167L0 9.49833ZM11.8033 2.695C12.0633 2.435 12.0633 2.01167 11.8033 1.75167L10.2467 0.195C9.98667 -0.065 9.56333 -0.065 9.30333 0.195L8.08333 1.415L10.5833 3.915L11.8033 2.695Z" fill={color} />
       </svg>
     </span>
   );
@@ -115,57 +116,63 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
     onMemberAction: (id: number) => void;
     actionIcon: JSX.Element;
     actionLabel: string;
-  }> = ({ 
-    members, 
-    title, 
-    selectedIds, 
-    onMemberSelect, 
-    onSelectAll, 
-    onDeselectAll, 
-    onMemberAction, 
-    actionIcon, 
-    actionLabel 
-  }) => (
-    <div style={{height:'25vh',overflowY:'auto'}} className="card border flex-fill d-flex flex-column">
-      <div className="card-header bg-light d-flex align-items-center justify-content-between">
-        <h5 className="card-title mb-0 fw-semibold">{title}</h5>
-      </div>
-      <div className="card-body p-0 flex-fill" style={{  }}>
-        <div className="list-group list-group-flush">
-          {members.map(member => (
-            <div key={member.id} className="list-group-item d-flex align-items-center justify-content-between">
-              <div className="form-check mb-0 flex-grow-1">
-                <input
-                  type="checkbox"
-                  checked={selectedIds.includes(member.id)}
-                  onChange={(e) => onMemberSelect(member.id, e.target.checked)}
-                  className="form-check-input"
-                  id={`member-${member.id}`}
-                />
-                <label className="form-check-label small ms-2" htmlFor={`member-${member.id}`}>
-                  {member.name}
-                </label>
-              </div>
-              <button
-                onClick={() => onMemberAction(member.id)}
-                className="btn btn-link p-0 text-muted border-0 flex-shrink-0"
-                style={{ opacity: 0.3 }}
-                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.3'}
-                title={actionLabel}
-              >
-                {actionIcon}
-              </button>
+  }> = ({
+    members,
+    title,
+    selectedIds,
+    onMemberSelect,
+    onSelectAll,
+    onDeselectAll,
+    onMemberAction,
+    actionIcon,
+    actionLabel
+  }) => {
+      const isDarkMode = useAppSelector(state => state.darkMode.value);
+      const bgClass = isDarkMode ? "bg-dark text-light" : "bg-white text-dark";
+      const bgClassHeader = isDarkMode ? "bg-dark text-light" : "bg-light text-dark";
+      const borderColor = isDarkMode ? "border-secondary" : "border";
+      return (
+        <div style={{ height: '25vh', overflowY: 'auto' }} className="card border flex-fill d-flex flex-column">
+          <div className={`card-header ${bgClassHeader} ${borderColor}`}>
+            <h5 className="card-title mb-0 fw-semibold">{title}</h5>
+          </div>
+          <div className={`card-body p-0 flex-fill ${bgClass}`} style={{}}>
+            <div className={"list-group list-group-flush "}>
+              {members.map(member => (
+                <div key={member.id} className={"list-group-item d-flex align-items-center justify-content-between"+" "+borderColor+" "+bgClass}>
+                  <div className="form-check mb-0 flex-grow-1">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(member.id)}
+                      onChange={(e) => onMemberSelect(member.id, e.target.checked)}
+                      className="form-check-input"
+                      id={`member-${member.id}`}
+                    />
+                    <label className="form-check-label small ms-2" htmlFor={`member-${member.id}`}>
+                      {member.name}
+                    </label>
+                  </div>
+                  <button
+                    onClick={() => onMemberAction(member.id)}
+                    className="btn btn-link p-0 text-muted border-0 flex-shrink-0"
+                    style={{ opacity: 0.3 }}
+                    onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                    onMouseLeave={(e) => e.currentTarget.style.opacity = '0.3'}
+                    title={actionLabel}
+                  >
+                    {actionIcon}
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
-    </div>
-  );
+      )
+    };
 
   return (
     <div className="flex d-flex flex-column" style={{}}>
-      <h2 className=" fw-bold text-dark mb-3">Members</h2>
+      <h2 className=" fw-bold mb-3">Members</h2>
       <div className="d-flex flex-column flex-md-row gap-5 align-items-stretch flex-fill">
         <MemberList
           members={filteredMembers}
@@ -175,10 +182,10 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
           onSelectAll={selectAllUnassigned}
           onDeselectAll={deselectAllUnassigned}
           onMemberAction={onAssignMember}
-          actionIcon={<EditIcon />}
+          actionIcon={<EditIcon color={!isDarkMode?'black':'white'} />}
           actionLabel="Assign member"
         />
-        <div  className="d-flex flex-row flex-md-column gap-2 justify-content-center justify-content-md-end pb-3">
+        <div className="d-flex flex-row flex-md-column gap-2 justify-content-center justify-content-md-end pb-3">
           <button
             onClick={assignSelected}
             disabled={selectedUnassigned.length === 0}
@@ -235,7 +242,7 @@ const MembersTransfer: React.FC<MembersTransferProps> = ({
           onSelectAll={selectAllAssigned}
           onDeselectAll={deselectAllAssigned}
           onMemberAction={onUnassignMember}
-          actionIcon={<EditIcon />}
+          actionIcon={<EditIcon color={!isDarkMode?'black':'white'} />}
           actionLabel="Unassign member"
         />
       </div>

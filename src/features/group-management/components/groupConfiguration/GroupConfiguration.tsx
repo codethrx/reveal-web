@@ -56,7 +56,7 @@ export default function GroupConfiguration() {
     return (
         <>
             <h2>
-                Group 1
+                Group Name
             </h2>
             <Row className="my-4">
                 <Col md={8} className="mb-2">
@@ -92,7 +92,7 @@ export default function GroupConfiguration() {
                 }}
             />
             {/* Create Modal */}
-            <Modal contentClassName={isDarkMode ? 'bg-dark' : 'bg-white'} show={showCreateModal} onHide={() => setShowCreateModal(false)} centered>
+            <Modal  backdrop="static" contentClassName={isDarkMode ? 'bg-dark' : 'bg-white'} show={showCreateModal} onHide={() => setShowCreateModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Create New Group</Modal.Title>
                 </Modal.Header>
